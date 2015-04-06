@@ -1,179 +1,88 @@
-// var c;
-// var ctx;
+var c; 
+var context;
 
-// var width;
-// var height;
+var width;
+var height;
 
-// var rows;
-// var cols;
+var rows;
+var cols;
 
-// var nBrd;
-// var nDim;
+var nDim;
+var nBrd;
 
-// var startX;
-// var startY;
-// var endX;
-// var endY;
+var startX;
+var startY;
 
-function node(t){
-	this.type = t;
-}
+var endX;
+var endY;
 
-function game(sx, sy, ex, ey, r, c, nb, nd, cx){
-	this.ctx = cx;
-	
-	this.row = r;
-	this.col = c;
-	this.startX = sx;
-	this.startY = sy;
-	this.endX = ex;
-	this.endY = ey;
-	this.nDim = nd;
-	this.nBrd = nb;
-	
-	var arr = new Array(rows);
-	
-	for(var g = 0; g < rows; g++)
-		arr[g] = new Array(cols);
-	
-	for(var h = 0; h < rows; h++){
-		for(var i = 0; i < cols; i++){
-			arr[h][i] = new node();
-			
-			if(h == startX && i == startY){
-				arr[h][i] = new node(0);
-				console.log("start node");
-			}
-			else if(h == endX && i == endY){
-				arr[h][i] = new node(1);
-				console.log("end node");
-			}
-			else{
-				arr[h][i] = new node(2);
-			}
-			
-			console.log("Array pass #2, Type: " + arr[h][i].type);
-			
-		}
-	}
-}
+var grid = [];
 
-game.prototype.draw(){
-	
-	for(var j in arr){
-		for(var k in arr[j]){
-			// ctx.rect((j * (nDim + nBrd)), (k * (nDim + nBrd)), nDim, nDim);
-			
-			var str = "";
-			
-			if(arr[j][k].type == 0)
-				str = "blue";
-			else if(arr[j][k].type == 1)
-				str = "red";
-			else
-				str = "black";
-			
-			//console.log("Array Pass #3, str: " + str + " and ctx.fillStyle: " + ctx.fillStyle);
-			
-			//ctx.rect((j * (nDim + nBrd)), (k * (nDim + nBrd)), nDim, nDim);
-			ctx.fillStyle = str;
-			ctx.fillRect((j * (nDim + nBrd)), (k * (nDim + nBrd)), nDim, nDim);
-
-			// var str = "pink"
-			// ctx.fillStyle = str;
-			// ctx.fill();
-		}
-	}
-	
-}
-
+node = function(){
+	this.type = 2;
+};
 
 function init(){
-	
-	var c = document.getElementById("gameCanvas");
-	var context = c.getContext('2d');
 
-	var width = c.width;
-	var height = c.height;
+	c = document.getElementById("gameCanvas");
+	context = c.getContext('2d');
+
+	width = c.width;
+	height = c.height;
 	
-	var rows = 10;
-	var cols = 10;
+	rows = 10;
+	cols = 10;
 	
-	var nBd = 5;
-	var nD = (width - ((rows-1) * nBd)) / rows;
+	nBrd = 5;
+	nDim = (width - ((rows-1) * nBd)) / rows;
 	
-	var start_X = 1;
-	var start_Y = 1;
-	var end_X = 8;
-	var end_Y = 7;
-	
-	var A = new game(start_X, start_Y, end_X, end_Y, rows, cols, nBd, nD, context);
-	
-	var gameloop;
-	var fps = 60;
-	
-	main(gameloop, fps);
-	
-	// var arr = new Array(rows);
-	
-	// for(var g = 0; g < rows; g++)
-		// arr[g] = new Array(cols);
-	
-	// for(var h = 0; h < rows; h++){
-		// for(var i = 0; i < cols; i++){
-			// arr[h][i] = new node();
+	startX = 1;
+	startY = 1;
+	endX = 8;
+	endY = 7;
+
+	for(var i = 0; i < rows; i++){
+		grid[i] = [];
+		for(var j = 0; j < cols; j++){
+			var t = new node();
+			grid[i][j] = t;
 			
-			// if(h == startX && i == startY){
-				// arr[h][i] = new node(0);
-				// console.log("start node");
-			// }
-			// else if(h == endX && i == endY){
-				// arr[h][i] = new node(1);
-				// console.log("end node");
-			// }
-			// else{
-				// arr[h][i] = new node(2);
-			// }
-			
-			// console.log("Array pass #2, Type: " + arr[h][i].type);
-			
-		// }
-	// }
+			if(i == startX && j == startY)
+				grid[i][j].type = 0;
+			else if(i == endX && j == endY)
+				grid[i][j].type = 1;
+			else
+				grid[i][j].type = 2;
+		}
+	}
 	
-	// for(var j = 0; j < rows; j++){
-		// for(var k = 0; k < cols; k++){
-	// for(var j in arr){
-		// for(var k in arr[j]){
-			// // ctx.rect((j * (nDim + nBrd)), (k * (nDim + nBrd)), nDim, nDim);
-			
+	main();
+}
+
+function main(){
+	requestAnimationFrame(main);
+	//draw();
+	
+	context.fillStyle = "blue";
+	context.fillRect(100, 100, 50, 50);
+	
+}
+
+// function draw(){
+	// for(var j in grid){
+		// for(var k in grid[j]){
+
 			// var str = "";
 			
-			// if(arr[j][k].type == 0)
+			// if(grid[j][k].type == 0)
 				// str = "blue";
-			// else if(arr[j][k].type == 1)
+			// else if(grid[j][k].type == 1)
 				// str = "red";
 			// else
 				// str = "black";
 			
-			// //console.log("Array Pass #3, str: " + str + " and ctx.fillStyle: " + ctx.fillStyle);
-			
-			// //ctx.rect((j * (nDim + nBrd)), (k * (nDim + nBrd)), nDim, nDim);
-			// ctx.fillStyle = str;
-			// ctx.fillRect((j * (nDim + nBrd)), (k * (nDim + nBrd)), nDim, nDim);
-			
-			
-			
-			// // var str = "pink"
-			// // ctx.fillStyle = str;
-			// // ctx.fill();
+			// context.fillStyle = str;
+			// context.fillRect((j * (nDim + nBrd)), (k * (nDim + nBrd)), nDim, nDim);
 		// }
 	// }
-}
-
-function main(fps, loop){
-	if(loop)
-		clearInterval(loop);
-	
-	loop = setInterval(update, 1000/fps);
-	
-}
+// }
