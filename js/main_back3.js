@@ -28,15 +28,12 @@ var d_sy;
 var d_ex;
 var d_ey;
 
-var grid = new Array();
+var grid = [];
 
 var isDone = false;
 
 node = function(){
-	this.isStart = false;
-	this.isEnd = false;
-	this.isObs = false;
-	
+	this.type = 2;
 	this.f = 0;
 	this.g = 0;
 	this.h = 0;
@@ -47,11 +44,12 @@ node = function(){
 	this.cost = 10;
 	
 	this.path = false;
+	
 	this.parent = null;
 	// this.parentX = 0;
 	// this.parentY = 0;
 	
-	this.neighbors = new Array();
+	this.neighbors = [];
 };
 
 document.onmousemove = function(e){
@@ -88,12 +86,11 @@ document.onmousedown = function(e){
 	// else if(grid[mouseRow][mouseCol].type == 3)
 		// grid[mouseRow][mouseCol].type = 2;
 	
-	if(grid[mouseRow][mouseCol].isStart && !grid[mouseRow][mouseCol].isEnd){
-		if(noEnd == false){
-			grid[mouseRow][mouseCol].isEnd = false;
-		}
+	if(grid[mouseRow][mouseCol].type == 0){
+		if(noEnd == false)
+			grid[mouseRow][mouseCol].type = 2;
 		else{
-			grid[mouseRow][mouseCol].isEnd = true;
+			grid[mouseRow][mouseCol].type = 1;
 			endX = grid[mouseRow][mouseCol].x;
 			d_ex = grid[mouseRow][mouseCol].x;
 			endY = grid[mouseRow][mouseCol].y;
@@ -101,41 +98,40 @@ document.onmousedown = function(e){
 			end = grid[mouseRow][mouseCol];
 			noEnd = false;
 		}
-		grid[mouseRow][mouseCol].isStart = false;
-		grid[mouseRow][mouseCol].isObs = false;
 		noStart = true;
 		start = null;
 	}
-	else if(!grid[mouseRow][mouseCol].isStart && grid[mouseRow][mouseCol].isEnd){
-		grid[mouseRow][mouseCol].isEnd = false;
-		grid[mouseRow][mouseCol].isStart = false;
-		grid[mouseRow][mouseCol].isObs = false;
+	else if(grid[mouseRow][mouseCol].type == 1){
+		grid[mouseRow][mouseCol].type = 2;
 		end = null;
 		noEnd = true;
 	}
-	else if(!grid[mouseRow][mouseCol].isStart && !grid[mouseRow][mouseCol].isEnd){
-		if(grid[mouseRow][mouseCol].isObs){
-			if(noStart){
-				grid[mouseRow][mouseCol].isStart = true;
-				grid[mouseRow][mouseCol].isObs = false;
-				start = grid[mouseRow][mouseCol];
-				noStart = false;
-			}
-			else if(noEnd){
-				grid[mouseRow][mouseCol].isEnd = true;
-				grid[mouseRow][mouseCol].isObs = false;
-				end = grid[mouseRow][mouseCol];
-				noEnd = false;
-			}
-			else{
-				grid[mouseRow][mouseCol].isObs = false;
-			}
+	else if(grid[mouseRow][mouseCol].type == 2)
+		grid[mouseRow][mouseCol].type = 3;
+	else if(grid[mouseRow][mouseCol].type == 3){
+		if(noStart == false && noEnd == false)
+			grid[mouseRow][mouseCol].type = 2;
+		else if(noStart == false && noEnd == true){
+			grid[mouseRow][mouseCol].type = 1;
+			endX = grid[mouseRow][mouseCol].x;
+			d_ex = grid[mouseRow][mouseCol].x;
+			endY = grid[mouseRow][mouseCol].y;
+			d_ey = grid[mouseRow][mouseCol].y;
+			end = grid[mouseRow][mouseCol];
+			noEnd = false;
 		}
 		else{
-			grid[mouseRow][mouseCol].isObs = true;
+			grid[mouseRow][mouseCol].type = 0;
+			startX = grid[mouseRow][mouseCol].x;
+			d_sx = grid[mouseRow][mouseCol].x;
+			startY = grid[mouseRow][mouseCol].y;
+			d_sy = grid[mouseRow][mouseCol].y;
+			start = grid[mouseRow][mouseCol];
+			noStart = false;
 		}
 	}
-		
+	else
+		grid[mouseRow][mouseCol].type = 3;
 	
 	draw();
 };
@@ -160,11 +156,11 @@ function init(){
 	d_ex = endX;
 	d_ey = endY;
 	
-	closedSet = new Array();
-	openSet = new Array();
+	closedSet = [];
+	openSet = [];
 	
 	for(var i = 0; i < rows; i++){
-		grid[i] = new Array();
+		grid[i] = [];
 		for(var j = 0; j < cols; j++){
 			var t = new node();
 			
@@ -172,24 +168,22 @@ function init(){
 			t.y = i;
 			
 			if(i == startY && j == startX){
-				t.isStart = true;
-				t.isEnd = false;
-				t.isObs = false;
-				
+				// grid[i][j].type = 0;
+				t.type = 0;
 				start = t;
 				noStart = false;
+				// start = grid[i][j];
 			}
 			else if(i == endY && j == endX){
-				t.isEnd = true;
-				t.isStart = false;
-				t.isObs = false;
+				// grid[i][j].type = 1;
+				t.type = 1;
 				end = t;
 				noEnd = false;
+				// end = grid[i][j];
 			}
 			else {				
-				t.isStart = false;
-				t.isEnd = false;
-				t.isObs = false;
+				// grid[i][j].type = 2;
+				t.type = 2;
 			}
 			
 			grid[i][j] = t;
@@ -199,31 +193,33 @@ function init(){
 	draw();
 }
 
+function min_node(nodeArray){
+	var min;
+	var minIndex;
+	if(nodeArray){
+		min = nodeArray[0].f;
+		minIndex = 0;
+		for(var i = 0; i < nodeArray.length; i++){
+			if(nodeArray[i].f < min){
+				min = nodeArray[i].f;
+				minIndex = i;
+			}
+		}
+		
+		return nodeArray[minIndex];
+	}
+}
+
 function A_Star(){
 	
 	
 	if(start && end){
-		var x;
-		var y;
-		
-		closedSet = new Array();
-		
-		for(var a = 0; a < rows; a++){
-			for(var b = 0; b < cols; b++){
-				if(grid[a][b].isStart){
-					x = b;
-					y = a;
-				}
-			}
-		}
-		
-		start = grid[y][x];
-		
-		// start.parent = null;
+		closedSet = [];
+		start.parent = null;
 		openSet.push(start);
 		
-		// start.g = 0;
-		// start.f = start.g + manhattanDistance(start);
+		start.g = 0;
+		start.f = start.g + manhattanDistance(start);
 		
 		while(openSet.length > 0){
 			
@@ -238,36 +234,37 @@ function A_Star(){
 			}
 			
 			var current = openSet[minIndex];
-			openSet.splice(minIndex, 1);
-			findNeighbors(current);
 			
-			if(current.isEnd){
+			if(current == end){
 				return followPath();
 			}
 			//draw();
-			
+			openSet.splice(minIndex, 1);
 			closedSet.push(current);
 			current.path = true;
 			
+			findNeighbors(current);
+
 			for(var j = 0; j < current.neighbors.length; j++){
 				if(closedSet.indexOf(current.neighbors[j]) >= 0){
-					continue;
+					continue
+					current.neighbors[j].type = 2;
 				}
-				
-				var temp_g;
 
-				if(current.x == current.neighbors[j].x || current.y == current.neighbors[j].y)
-					temp_g = current.g + 10;
-				else
-					temp_g = current.g + 14;
+				current.neighbors[j].type = 2;
 				
+				var temp_g = current.g + current.neighbors[j].cost;
+
 				if(openSet.indexOf(current.neighbors[j]) < 0 || temp_g < current.neighbors[j].g){
 					current.neighbors[j].parent = current;
 					current.neighbors[j].g = temp_g;
 					current.neighbors[j].f = current.neighbors[j].g + manhattanDistance(current.neighbors[j]);
 					
+					current.neighbors[j].type = 2;
+					
 					if(openSet.indexOf(current.neighbors[j]) < 0){
 						openSet.push(current.neighbors[j]);
+						current.neighbors[j].type = 2;
 					}
 				}
 			}
@@ -289,14 +286,16 @@ function A_Star(){
 			clear();
 		}
 	}
+	
 	//return false;
 }
 
 function followPath(){
 	var path = end;
-	
+	path.type = 2;
 	while(path.parent != null){	
 		path = path.parent;
+		//path.type = 6;	
 	}
 	
 	draw();	
@@ -370,24 +369,28 @@ function draw(){
 		for(var k in grid[j]){
 
 			var str = "";
-			if(grid[j][k].path == false){
-				if(grid[j][k].isObs && !grid[j][k].isStart && !grid[j][k].isEnd)
-					str = "green";
-				else if(!grid[j][k].isObs && grid[j][k].isStart && !grid[j][k].isEnd)
-					str = "blue";
-				else if(!grid[j][k].isObs && !grid[j][k].isStart && grid[j][k].isEnd)
-					str = "red";
-				else
+			if(grid[j][k].path == false && grid[j][k].type != 0 && grid[j][k].type != 1){
+				// if(grid[j][k].type == 0)
+					// str = "blue";
+				// else if(grid[j][k].type == 1)
+					// str = "red";
+				if(grid[j][k].type == 2)
 					str = "black";
+				else //if(grid[j][k].type == 3)
+					str = "green";
+				// else if(grid[j][k].type == 4)
+					// str = "orange";
+				// else if(grid[j][k].type == 5)
+					// str = "gray";
+				// else if(grid[j][k].type == 6)
+					// str = "yellow";
 			}
-			else{
-				if(grid[j][k].isStart)
-					str = "blue";
-				else if(grid[j][k].isEnd)
-					str = "red";
-				else
-					str = "yellow";
-			}
+			else if(grid[j][k].path == true && grid[j][k].type != 0 && grid[j][k].type != 1)
+				str = "gray";
+			else if(grid[j][k].type == 0 && grid[j][k].type != 1)
+				str = "blue";
+			else if(grid[j][k].type != 0 && grid[j][k].type == 1)
+				str = "red";
 			//manhattanDistance(grid[j][k]);
 			
 			context.fillStyle = str;
@@ -398,6 +401,71 @@ function draw(){
 			context.fillText(grid[j][k].g,(k * (nDim + nBrd)) + 2, (j * (nDim + nBrd)) + 10);
 		}
 	}
+}
+
+// function clear(){
+	
+	// startX = d_sx;
+	// startY = d_sy;
+	// endX = d_ex;
+	// endY = d_ey;
+	
+	// for(var i = 0; i < rows; i++){
+		// for(var j = 0; j < cols; j++){
+			
+			// grid[i][j].neighbors = [];
+			
+			// grid[i][j].f = 0;
+			// grid[i][j].g = 0;
+			// grid[i][j].h = 0;
+			
+			// grid[i][j].cost = 10;
+			
+			// if(i == startY && j == startX){
+			// //	t.type = 0;
+				// grid[i][j].type = 0;
+				// start = grid[i][j];
+				// noStart = false;
+				// // start = grid[i][j];
+			// }
+			// else if(i == endY && j == endX){
+				// //t.type = 1;
+				// //end = t;
+				// end = grid[i][j];
+				// grid[i][j].type = 1;
+				// noEnd = false;
+			// }
+			// else {				
+				// grid[i][j].type = 2;
+				// //t.type = 2;
+			// }
+			
+			// //grid[i][j] = t;
+		// }
+	// }
+	
+	// // startX = d_sx;
+	// // startY = d_sy;
+	// // endX = d_ex;
+	// // endY = d_ey;
+	
+	// openSet = [];
+	// closedSet = [];
+	// draw();
+// }
+
+Array.prototype.includes = function (obj){
+
+		var i = this.length;
+		
+		while(i--){
+			if(this[i] == obj){
+				return true;
+			}
+		}
+		
+		return false;
+
 }
 
 init();
