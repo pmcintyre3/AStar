@@ -1,0 +1,52 @@
+# A* Algorithm
+### Author: Phillip McIntyre
+
+## Criteria
+
+* Constructed using HTML5/JavaScript/Canvas
+
+* Displays Default Map
+
+* F, G, and H toggle display pressing 'A' key
+
+* Final Path drawn after it reaches the end
+
+* Simulates the entire algorithm by pressing 'D' key
+
+* Step through algorithm using 'S' key
+
+* Grid can have as many as the user desires. Quality 
+degenerates at around 50 x 50
+
+* Grid is entirely customizable
+
+* Click blank spaces to add obstacles. Click obstacles 
+to remove them
+
+* Click goal space to remove it. Click a blank space 
+to add the goal space to the map
+
+* Click start space to remove it. Click a blank space
+to add the start space to the map
+
+* Two text boxes are available on the right to 
+change the row and column dimensions
+
+* A star finds the most optimal path according to the
+Heuristic option given. If the Heuristic does not overestimate
+the cost of reaching the goal, it may not be able to determine
+the optimal path.
+
+* A* uses a Heuristic to determine a more optimal path. Without
+the Heuristic to aid in finding more relevant paths (or, if
+for every node, h(x) = 0), it becomes equivalent to Dijkstra's 
+Algorithm.
+
+## Embellishments
+
+* Node width/height adjusts depending on number of rows and
+columns and border width.
+
+* Added Dijkstra's Algorithm in
+
+* Built in HTML5/JavaScript/Canvas
