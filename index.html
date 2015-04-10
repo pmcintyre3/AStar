@@ -1,5 +1,15 @@
 <!DOCTYPE html>
 <html>
+
+<!--- 
+	Author: Phillip McIntyre Jr, 2015
+	Purpose: To provide a visual representation of how the A* Algorithm
+				finds the ideal path. You can simulate the algorithm in
+				one pass through or step through it one search at a time.
+				F, G, and H values are displayed in each node. The canvas
+				resizes the boxes depending on the number of nodes.
+--->
+
 <head>
 	<title>A* Tutorial</title>
 	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
@@ -9,8 +19,9 @@
 <body>
 	
 	<div id="Options">
-		<h1> A* Algorithm </h1>
+		<h1 id="alg"> A* Algorithm </h1>
 		<h2>Written by Phillip McIntyre Jr, 2015</h2>
+		<hr />
 		<div id="instructions">
 			<h3>Legend</h3>
 			<ul>
@@ -18,18 +29,22 @@
 			<li><span style="color: red;">Red: </span> End</li>
 			<li><span style="color: white;">Black: </span> Walkable</li>
 			<li><span style="color: green;">Green: </span> Obstacle</li>
-			<li><span style="color: gray;">Gray: </span> Searched</li>
+			<li><span style="color: gray;">Dark Gray: </span> Searched using A*</li>
+			<li><span style="color: #DCDCDC;">Light Gray: </span> Searched using Dijkstra</li>
 			<li><span style="color: yellow;">Yellow: </span> Ideal Path</li>
 			</ul>
 			<h3>Instructions<h3>
 			<ul>
 				<li>Press 'A' to switch between 'F', 'G', and 'H' values</li>
-				<li>Press 'S' to simulate the Algorithm</li>
-				<li>Clicking boxes toggles between types</li>
+				<li>Press 'S' to step through the Algorithm</li>
+				<li>Press 'D' to simulate the Algorithm</li>
+				<li>Press 'F' to switch between Dijkstra and A*</li>
+				<li>Press 'Z' to reset the map</li>
+				<li>Click boxes to toggle between Start, End, Blank, and Obstacles</li>
 			</ul>
 		</div>
-		<div id="gameForm">
 		
+		<div id="gameForm">
 		<h3>Settings</h3>
 			<form name="setGame" action="" method="get">
 				<label>Rows</label> <input type="number" name="rowValue" id="rowValue" value=10 /> <br />
