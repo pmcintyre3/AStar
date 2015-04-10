@@ -140,7 +140,7 @@ node = function(){
 	this.g = 0;
 	this.h = 0;
 	
-	this.parent = 0;
+	this.parent;
 	this.path = false;
 	this.winPath = false;
 	
@@ -153,7 +153,6 @@ function A_star(){
 		for(var j = 0; j < cols; j++){
 			if(grid[i][j].isStart){
 				start = grid[i][j];
-				// console.log("start: " + j + "," + i);
 			}
 			if(grid[i][j].isEnd){
 				end = grid[i][j];
@@ -167,10 +166,11 @@ function A_star(){
 	start.g = 0;
 	manhattanDistance(start);
 	start.f = start.g + start.h;
+	
 	start.parent = null;
+	console.log("is start.parent == null? : " + (start.parent == null));
 	
 	openset.push(start);
-	
 	
 	while(openset.length > 0){
 		
@@ -191,16 +191,15 @@ function A_star(){
 		if(current.isEnd){
 			
 			current.winPath = true;
-			end.parent = current;
+			// end.parent = current;
 			
-			return followPath(end);
+			return followPath(current);
 		}
 		
 		current.path = true;
 		
 		openset.splice(minIndex, 1);
 		closedset.push(current);
-		
 		
 		findNeighbors(current);
 		
@@ -220,15 +219,23 @@ function A_star(){
 				temp_g = current.g + 14;
 			}
 			
-			if(openset.indexOf(neighbors[j]) < 0 ||temp_g < neighbors[j].g){
-				neighbors[j].parent = current;
-				neighbors[j].g = temp_g;
-				manhattanDistance(neighbors[j]);
-				neighbors[j].f = neighbors[j].g + neighbors[j].h;
+			if(openset.indexOf(neighbors[j]) <= 0 ||temp_g < neighbors[j].g){
 				
-				if(openset.indexOf(neighbors[j]) < 0){
-					openset.push(neighbors[j]);
+				var t = neighbors[j];
+				
+				t.parent = current;
+				console.log("t.parent is: " + typeof t.parent);
+				console.log("assigned parent: " +  (t.parent == current));
+				
+				t.g = temp_g;
+				manhattanDistance(t);
+				t.f = t.g + t.h;
+				
+				if(openset.indexOf(t) < 0){
+					openset.push(t);
 				}
+				
+				neighbors[j] = t;
 			}
 		}
 		draw();
@@ -241,12 +248,12 @@ function followPath(curr){
 	var p = curr;
 	p.winPath = true;
 	
-	// while(p.parent != start){
-		// p.winPath = true;
-		// p.path = false;
-		// p = p.parent;
-		// draw();
-	// }
+	while(p.parent){
+		p.winPath = true;
+		p.path = false;
+		p = p.parent;
+		draw();
+	}
 	
 	// if(p.parent == start)
 		// return;
@@ -282,43 +289,43 @@ function findNeighbors(node){
 	
 	//up, down, right, left
 	if(grid[y - 1] && grid[y-1][x]){
-		if(!grid[y-1][x].isObs)
-			nodeNeighbors.push(grid[y-1][x]);
+		if(!grid[y-1][x].isObs || !grid[y-1][x].isStart)
+			nodeNeighbors.push(grid[y - 1][x]);
 	}
 	if(grid[y + 1] && grid[y + 1][x])
-		if(!grid[y + 1][x].isObs)
+		if(!grid[y + 1][x].isObs || !grid[y + 1][x].isStart)
 			nodeNeighbors.push(grid[y + 1][x]);
 	if(grid[y][x + 1] && grid[y][x + 1])
-		if(!grid[y][x + 1].isObs){
+		if(!grid[y][x + 1].isObs || !grid[y][x + 1].isStart){
 			nodeNeighbors.push(grid[y][x + 1]);
 		}
 	if(grid[y][x - 1] && grid[y][x - 1])
-		if(!grid[y][x - 1].isObs){
+		if(!grid[y][x - 1].isObs|| !grid[y][x - 1].isStart){
 			nodeNeighbors.push(grid[y][x - 1]);
 		}
 	
 	//diagonals
 	
 	if(grid[y - 1] && grid[y - 1][x - 1]){
-		if(!grid[y - 1][x - 1].isObs && !grid[y][x - 1].isObs && !grid[y - 1][x].isObs){
+		if((!grid[y - 1][x - 1].isObs || !grid[y - 1][x - 1].isStart) && (!grid[y][x - 1].isObs || !grid[y][x - 1].isStart) && (!grid[y - 1][x].isObs || !grid[y - 1][x].isStart)){
 			nodeNeighbors.push(grid[y - 1][x - 1]);
 			grid[y - 1][x - 1].cost = 14;
 		}
 	}
 	if(grid[y - 1] && grid[y - 1][x + 1]){
-		if(!grid[y - 1][x + 1].isObs && !grid[y][x + 1].isObs && !grid[y - 1][x].isObs){
+		if((!grid[y - 1][x + 1].isObs || !grid[y - 1][x + 1].isStart) && (!grid[y][x + 1].isObs || !grid[y][x + 1].isStart) && (!grid[y - 1][x].isObs || !grid[y - 1][x].isStart)){
 			nodeNeighbors.push(grid[y - 1][x + 1]);
 			grid[y - 1][x + 1].cost = 14;
 		}
 	}
 	if(grid[y + 1] && grid[y + 1][x - 1]){
-		if(!grid[y + 1][x - 1].isObs && !grid[y][x - 1].isObs && !grid[y + 1][x].isObs){
+		if((!grid[y + 1][x - 1].isObs || !grid[y + 1][x + 1].isStart) && (!grid[y][x - 1].isObs || !grid[y + 1][x].isStart) && (!grid[y + 1][x].isObs || !grid[y + 1][x].isStart)){
 			nodeNeighbors.push(grid[y + 1][x - 1]);
 			grid[y + 1][x - 1].cost = 14;
 		}
 	}
 	if(grid[y + 1] && grid[y + 1][x + 1]){
-		if(!grid[y + 1][x + 1].isObs && !grid[y][x + 1].isObs && !grid[y + 1][x].isObs){
+		if((!grid[y + 1][x + 1].isObs || !grid[y + 1][x + 1].isStart) && (!grid[y][x + 1].isObs || !grid[y][x + 1].isStart) && (!grid[y + 1][x].isObs || !grid[y + 1][x].isStart)){
 			nodeNeighbors.push(grid[y + 1][x + 1]);
 			grid[y + 1][x + 1].cost = 14;
 		}
@@ -328,8 +335,8 @@ function findNeighbors(node){
 }
 
 function init(){
-	rows = 10;
-	cols = 10;
+	rows = 15;
+	cols = 15;
 
 	startX = 1;
 	startY = 2;
@@ -338,7 +345,7 @@ function init(){
 	endY = 7;
 	
 	nBrd = 1;
-	nDim =(width - ((rows - 1) * nBrd)) / rows;
+	nDim = (width - ((rows - 1) * nBrd)) / rows;
 	
 	grid = new Array();
 	
@@ -371,7 +378,7 @@ function init(){
 				t.isEnd = false;
 				t.isObs = false;
 			}
-			
+			// t.parent = null;
 			grid[i][j] = t;
 		}
 	}
@@ -391,8 +398,6 @@ function draw(){
 				if(block.winPath)
 					str = "yellow";
 				else{
-					// if(block.winPath && (!block.isStart || !block.isEnd) && !block.path)
-						// str = "yellow";
 					if(block.isStart)
 						str = "blue";
 					else if(block.isEnd)
