@@ -7,7 +7,41 @@
 	<link rel="stylesheet" type="text/css" href="css/style.css" />
 </head>
 <body>
-	<canvas id="gameCanvas" height="650" width="650"></canvas>
+	
+	<div id="Options">
+		<h1> A* Algorithm </h1>
+		<h2>Written by Phillip McIntyre Jr, 2015</h2>
+		<div id="instructions">
+			<h3>Legend</h3>
+			<ul>
+			<li><span style="color: blue;">Blue: </span> Start</li>
+			<li><span style="color: red;">Red: </span> End</li>
+			<li><span style="color: white;">Black: </span> Walkable</li>
+			<li><span style="color: green;">Green: </span> Obstacle</li>
+			<li><span style="color: gray;">Gray: </span> Searched</li>
+			<li><span style="color: yellow;">Yellow: </span> Ideal Path</li>
+			</ul>
+			<h3>Instructions<h3>
+			<ul>
+				<li>Press 'A' to switch between 'F', 'G', and 'H' values</li>
+				<li>Press 'S' to simulate the Algorithm</li>
+				<li>Clicking boxes toggles between types</li>
+			</ul>
+		</div>
+		<div id="gameForm">
+		
+		<h3>Settings</h3>
+			<form name="setGame" action="" method="get">
+				<label>Rows</label> <input type="number" name="rowValue" id="rowValue" value=10 /> <br />
+				<label>Columns</label> <input type="number" name="colValue" id="colValue" value=10 /> <br />
+				<input type="button" name="setRC" id="setRC" value="Submit" onClick="setRowCol()"/>
+			</form>
+		</div>
+	</div>
+	<div id="main">
+		<canvas id="gameCanvas" height="650" width="650"></canvas>
+	</div>
+	
 	<script type="text/javascript" src="js/main.js"></script>
 </body>
 </html>

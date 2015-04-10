@@ -22,12 +22,14 @@ var startExist;
 var endExist;
 
 var grid = [];
+// var closedset;
+// var openset;
 
 var isDone = false;
 
 var mx, my;
 
-var winList = [];
+var debug;
 
 document.onmousemove = function(e){
 	mouseX = e.pageX - (window.innerWidth - width) / 2;
@@ -114,18 +116,79 @@ document.onmousedown = function(e){
 
 function keyFunc(e){
 	switch(e.keyCode){
-		case 32:
+		case 83:
 			if(isDone){
-				console.log("init...");
 				init();
 			}
 			else{
-				console.log("A_Star...");
 				A_star();
 			}
 			isDone = !isDone;
 			break;
+		case 65:
+			debug = (debug + 1) % 4;
+			draw();
+			break;
 	}
+}
+
+function setRowCol(){
+	rows = parseInt(document.getElementById('rowValue').value);
+	cols = parseInt(document.getElementById('colValue').value);
+	
+	nBrd = 1;
+	nDim = (width - ((rows - 1) * nBrd)) / rows;
+	
+	if(startX > cols)
+		startX = cols-1
+	if(startY > rows)
+		startY = rows-1;
+
+	if(endX > cols)
+		endX = cols-1;
+	if(endY > rows)
+		endY = rows-1;
+	
+	buildGrid();
+	
+	// grid = new Array();
+	
+	// for(var i = 0; i < rows; i++){
+		
+		// grid[i] = new Array();
+		
+		// for(var j = 0; j < cols; j++){
+		
+			// var t = new node();
+			// t.x = j;
+			// t.y = i;
+		
+			// if(i == startY && j == startX){
+				// start = t;
+				// t.isStart = true;
+				// t.isEnd = false;
+				// t.isObs = false;
+				// startExist = true;
+			// }
+			// else if(i == endY && j == endX){
+				// end = t;
+				// t.isStart = false;
+				// t.isEnd = true;
+				// t.isObs = false;
+				// endExist = true;
+			// }
+			// else{
+				// t.isStart = false;
+				// t.isEnd = false;
+				// t.isObs = false;
+			// }
+			//t.parent = null;
+			// grid[i][j] = t;
+		// }
+	// }
+	
+	// draw();
+	
 }
 
 node = function(){
@@ -168,7 +231,6 @@ function A_star(){
 	start.f = start.g + start.h;
 	
 	start.parent = null;
-	console.log("is start.parent == null? : " + (start.parent == null));
 	
 	openset.push(start);
 	
@@ -206,7 +268,7 @@ function A_star(){
 		var neighbors = current.neighbors;
 		
 		for(var j = 0; j < neighbors.length; j++){
-			if(closedset.indexOf(neighbors[j]) > 0 || neighbors[j].isObs){
+			if(closedset.indexOf(neighbors[j]) >= 0 || neighbors[j].isObs){
 				continue;
 			}
 			
@@ -224,8 +286,6 @@ function A_star(){
 				var t = neighbors[j];
 				
 				t.parent = current;
-				console.log("t.parent is: " + typeof t.parent);
-				console.log("assigned parent: " +  (t.parent == current));
 				
 				t.g = temp_g;
 				manhattanDistance(t);
@@ -244,6 +304,100 @@ function A_star(){
 	init();
 }
 
+// function setupAStar(){
+	
+	// for(var i = 0; i < rows; i++){
+		// for(var j = 0; j < cols; j++){
+			// if(grid[i][j].isStart){
+				// start = grid[i][j];
+			// }
+			// if(grid[i][j].isEnd){
+				// end = grid[i][j];
+			// }
+		// }
+	// }
+	
+	// closedset = new Array();
+	// openset = new Array();
+	
+	// start.g = 0;
+	// manhattanDistance(start);
+	// start.f = start.g + start.h;
+	
+	// start.parent = null;
+	
+	// openset.push(start);
+	
+	// while(openset.length > 0){
+		
+		// var current;
+
+		// var min = Number.POSITIVE_INFINITY;
+		// var minIndex = 0;
+		
+		// for(var i = openset.length-1; i >= 0; i--){
+			// if(openset[i].f < min){
+				// min = openset[i].f;
+				// minIndex = i;
+			// }
+		// }
+		
+		// current = openset[minIndex];
+		
+		// if(current.isEnd){
+			
+			// current.winPath = true;
+			// // end.parent = current;
+			
+			// return followPath(current);
+		// }
+		
+		// current.path = true;
+		
+		// openset.splice(minIndex, 1);
+		// closedset.push(current);
+		
+		// findNeighbors(current);
+		
+		// var neighbors = current.neighbors;
+		
+		// for(var j = 0; j < neighbors.length; j++){
+			// if(closedset.indexOf(neighbors[j]) >= 0 || neighbors[j].isObs){
+				// continue;
+			// }
+			
+			// var temp_g;
+			
+			// if(current.x == neighbors[j].x || current.y == neighbors[j].y){
+				// temp_g = current.g + 10;
+			// }
+			// else{
+				// temp_g = current.g + 14;
+			// }
+			
+			// if(openset.indexOf(neighbors[j]) <= 0 ||temp_g < neighbors[j].g){
+				
+				// var t = neighbors[j];
+				
+				// t.parent = current;
+				
+				// t.g = temp_g;
+				// manhattanDistance(t);
+				// t.f = t.g + t.h;
+				
+				// if(openset.indexOf(t) < 0){
+					// openset.push(t);
+				// }
+				
+				// neighbors[j] = t;
+			// }
+		// }
+		// draw();
+	// }
+	// alert("No path found!");
+	// init();
+// }
+
 function followPath(curr){
 	var p = curr;
 	p.winPath = true;
@@ -254,13 +408,6 @@ function followPath(curr){
 		p = p.parent;
 		draw();
 	}
-	
-	// if(p.parent == start)
-		// return;
-	// else{
-		// p = p.parent;
-		// return followPath(p);
-	// }
 	
 	draw();
 	
@@ -303,7 +450,7 @@ function findNeighbors(node){
 		if(!grid[y][x - 1].isObs|| !grid[y][x - 1].isStart){
 			nodeNeighbors.push(grid[y][x - 1]);
 		}
-	
+		
 	//diagonals
 	
 	if(grid[y - 1] && grid[y - 1][x - 1]){
@@ -335,8 +482,13 @@ function findNeighbors(node){
 }
 
 function init(){
-	rows = 15;
-	cols = 15;
+	
+	if(isNaN(rows)){
+		rows = 15;
+	}
+	if(isNaN(cols)){
+		cols = 15;
+	}
 
 	startX = 1;
 	startY = 2;
@@ -346,6 +498,51 @@ function init(){
 	
 	nBrd = 1;
 	nDim = (width - ((rows - 1) * nBrd)) / rows;
+	
+	debug = 0;
+	
+	buildGrid();
+	
+	// grid = new Array();
+	
+	// for(var i = 0; i < rows; i++){
+		
+		// grid[i] = new Array();
+		
+		// for(var j = 0; j < cols; j++){
+		
+			// var t = new node();
+			// t.x = j;
+			// t.y = i;
+		
+			// if(i == startY && j == startX){
+				// start = t;
+				// t.isStart = true;
+				// t.isEnd = false;
+				// t.isObs = false;
+				// startExist = true;
+			// }
+			// else if(i == endY && j == endX){
+				// end = t;
+				// t.isStart = false;
+				// t.isEnd = true;
+				// t.isObs = false;
+				// endExist = true;
+			// }
+			// else{
+				// t.isStart = false;
+				// t.isEnd = false;
+				// t.isObs = false;
+			// }
+			// t.parent = null;
+			// grid[i][j] = t;
+		// }
+	// }
+	
+	// draw();
+}
+
+function buildGrid(){
 	
 	grid = new Array();
 	
@@ -379,6 +576,7 @@ function init(){
 				t.isObs = false;
 			}
 			// t.parent = null;
+			
 			grid[i][j] = t;
 		}
 	}
@@ -395,27 +593,53 @@ function draw(){
 			var block = grid[i][j];
 			
 			var str = "";
-				if(block.winPath)
-					str = "yellow";
-				else{
-					if(block.isStart)
-						str = "blue";
-					else if(block.isEnd)
-						str = "red";
-					else if(block.isObs)
-						str = "green";
-					else if(block.path && (!block.isStart || !block.isEnd))
-						str = "#232323";
-					else
-						str = "black";
-				}
+			if(block.winPath && !block.isEnd)
+				str = "yellow";
+			else{
+				if(block.isStart)
+					str = "blue";
+				else if(block.isEnd)
+					str = "red";
+				else if(block.isObs)
+					str = "green";
+				else if(block.path && (!block.isStart || !block.isEnd))
+					str = "#232323";
+				else
+					str = "black";
+			}
+				
+			manhattanDistance(grid[i][j]);
 				
 			context.fillStyle = str;
 			context.fillRect(j * (nDim + nBrd), i * (nDim + nBrd), nDim, nDim);
 			
-			context.font="7px Helvetica";
-			context.fillStyle = "#ffffff";
-			context.fillText(grid[i][j].g,(j * (nDim + nBrd)) + 2, (i * (nDim + nBrd)) + 10);
+			if(debug == 0){
+				score = "";
+				context.font="7px Helvetica";
+				context.fillStyle = "#ffffff";
+				context.fillText("", (j * (nDim + nBrd)) + 2, (i * (nDim + nBrd)) + 10);
+			}
+			else if(debug == 1){
+				context.font="7px Helvetica";
+				context.fillStyle = "#ffffff";
+				context.fillText(grid[i][j].f, (j * (nDim + nBrd)) + 2, (i * (nDim + nBrd)) + 10);
+			}
+			else if(debug == 2){
+				context.font="7px Helvetica";
+				context.fillStyle = "#ffffff";
+				context.fillText(grid[i][j].g, (j * (nDim + nBrd)) + 2, (i * (nDim + nBrd)) + 10);
+			}
+			else{
+				context.font="7px Helvetica";
+				context.fillStyle = "#ffffff";
+				context.fillText(grid[i][j].h, (j * (nDim + nBrd)) + 2, (i * (nDim + nBrd)) + 10);
+			}
+			
+			// context.font="7px Helvetica";
+			// context.fillStyle = "#ffffff";
+			// context.fillText(grid[i][j].f, (j * (nDim + nBrd)) + 2, (i * (nDim + nBrd)) + 10);
+			
+			
 		}
 	}
 }

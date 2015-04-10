@@ -1,7 +1,42 @@
 body {
 	background-color: black;
 }
+/* 
+label {
+	color: white;
+} */
 
+label{
+   /*  display: inline-block; */
+	font-size: 15px;
+	display: block;
+    float: left;
+    clear: left;
+    width: 25%;
+    text-align: left;
+}
+input {
+  /* display: inline-block; */
+  display: block;
+  float: left;
+}
+
+#setRC {
+	clear: both;
+}
+
+#Options {
+	color: white;
+	font-size: 10px;
+	float: left;
+	display: block;
+}
+
+#main {
+	float: left;
+	display: block;
+	padding-left: 10px;
+}
 canvas {
 	background-color: white;
 
