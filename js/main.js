@@ -45,7 +45,7 @@ document.onmousemove = function(e){
 
 document.onmousedown = function(e){
 	
-	var mouseCol = Math.floor(mouseX / (nDim + nBrd));
+	var mouseCol = Math.floor((mouseX / (nDim + nBrd)) - 1) ;
 	var mouseRow = Math.floor(mouseY / (nDim + nBrd));
 	
 	// console.log("mouseCol: " + mouseCol + ", mouseRow: " + mouseRow);
