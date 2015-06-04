@@ -1,10 +1,3 @@
-   _____      _________ __                    _____  .__                       .__  __  .__             
-  /  _  \    /   _____//  |______ _______    /  _  \ |  |    ____   ___________|__|/  |_|  |__   _____  
- /  /_\  \   \_____  \\   __\__  \\_  __ \  /  /_\  \|  |   / ___\ /  _ \_  __ \  \   __\  |  \ /     \ 
-/    |    \  /        \|  |  / __ \|  | \/ /    |    \  |__/ /_/  >  <_> )  | \/  ||  | |   Y  \  Y Y  \
-\____|__  / /_______  /|__| (____  /__|    \____|__  /____/\___  / \____/|__|  |__||__| |___|  /__|_|  /
-        \/          \/           \/                \/     /_____/                            \/      \/ 
-		
 # A Star Algorithm
 Written by Phillip McIntyre Jr
 2015
@@ -30,8 +23,8 @@ with the zoom on the browser can temporarily fix this issue. It works best when 
 grid fully encompasses the window without clipping.
 
 ## Version
->2.0 Dijkstra's algorithm added in with relevant
-node color switching.
+2.0 Dijkstra's algorithm added in with relevant
+node color switching. Working on coordinate bug
 
 >1.6.1 Fix for removing start/end after simulating
 at least once
