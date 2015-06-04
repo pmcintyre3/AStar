@@ -23,6 +23,12 @@ them ineligible for traversing in the algorithm. Use these to make the algorithm
 solution more complicated! Clicking the start or end spaces will remove them from
 the grid. Make sure you add them back (wherever you like) before simulating.
 
+## Known issues
+The mouse coordinates, depending on the browser and its zoom level, can be inaccurate.
+This is a known issue an I am currently working on a fix. In the mean time, playing
+with the zoom on the browser can temporarily fix this issue. It works best when the
+grid fully encompasses the window without clipping.
+
 ## Version
 >2.0 Dijkstra's algorithm added in with relevant
 node color switching.
